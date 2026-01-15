@@ -13,13 +13,16 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props 
 }) => {
-  const baseStyles = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  const baseStyles = "px-4 py-2 rounded-lg font-bold transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2";
   
   const variants = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 shadow-md",
-    secondary: "bg-teal-500 text-white hover:bg-teal-600 focus:ring-teal-400 shadow-sm",
-    danger: "bg-red-500 text-white hover:bg-red-600 focus:ring-red-400",
-    outline: "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 focus:ring-indigo-500"
+    // Gold primary button (Yellowish/Escarcha) - Black text for contrast
+    primary: "bg-gold-500 text-black hover:bg-gold-400 focus:ring-gold-500 shadow-md hover:shadow-lg",
+    // Secondary dark
+    secondary: "bg-stone-800 text-white hover:bg-black focus:ring-stone-600 shadow-sm",
+    danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+    // Outline with Gold border
+    outline: "border-2 border-gold-500 text-gold-700 hover:bg-gold-50 focus:ring-gold-500 bg-transparent"
   };
 
   return (

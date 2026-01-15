@@ -22,37 +22,37 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose, cart,
     <>
       {/* Overlay */}
       <div 
-        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`${styles.overlay} ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={onClose}
       />
       
       {/* Sidebar */}
-      <div className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
-        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-indigo-50">
-          <h2 className="text-xl font-bold text-indigo-900">Tu Carrito</h2>
-          <button onClick={onClose} className="p-2 hover:bg-indigo-100 rounded-full text-indigo-700">
+      <div className={`${styles.sidebar.container} ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className={styles.sidebar.header}>
+          <h2 className="text-xl font-bold text-black">Tu Carrito</h2>
+          <button onClick={onClose} className={styles.sidebar.closeBtn}>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+        <div className={styles.sidebar.content}>
           {cart.length === 0 ? (
-            <div className="text-center text-slate-400 mt-20">
+            <div className={styles.emptyCart}>
               <p>Tu carrito está vacío</p>
             </div>
           ) : (
             cart.map(item => (
-              <div key={item.id} className="flex gap-4 border-b border-slate-50 pb-4 last:border-0">
-                <img src={item.imageUrl} alt={item.name} className="w-20 h-20 rounded-md object-cover bg-gray-100" />
+              <div key={item.id} className={styles.item.container}>
+                <img src={item.imageUrl} alt={item.name} className={styles.item.image} />
                 <div className="flex-1">
-                  <h4 className="font-semibold text-slate-800 line-clamp-1">{item.name}</h4>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-sm text-slate-500">Cant: {item.quantity}</span>
-                    <span className="font-medium text-indigo-600">{formatCurrency(item.price * item.quantity)}</span>
+                  <h4 className={styles.item.name}>{item.name}</h4>
+                  <div className={styles.item.details}>
+                    <span className="text-sm text-stone-700 font-medium">Cant: {item.quantity}</span>
+                    <span className="font-bold text-gold-700">{formatCurrency(item.price * item.quantity)}</span>
                   </div>
                   <button 
                     onClick={() => onRemove(item.id)}
-                    className="text-xs text-red-500 mt-2 hover:text-red-700 hover:underline"
+                    className={styles.item.removeBtn}
                   >
                     Eliminar
                   </button>
@@ -63,28 +63,53 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose, cart,
         </div>
 
         {cart.length > 0 && (
-          <div className="p-6 border-t border-slate-100 bg-slate-50">
+          <div className={styles.footer.container}>
             <div className="space-y-2 mb-4">
-              <div className="flex justify-between text-sm text-slate-500">
+              <div className={styles.footer.row}>
                 <span>Subtotal (Base)</span>
                 <span>{formatCurrency(basePrice)}</span>
               </div>
-              <div className="flex justify-between text-sm text-slate-500">
+              <div className={styles.footer.row}>
                 <span>IGV (18%)</span>
                 <span>{formatCurrency(igvAmount)}</span>
               </div>
-              <div className="flex justify-between text-lg font-bold text-slate-800 pt-2 border-t border-slate-200">
+              <div className={styles.footer.totalRow}>
                 <span>Total</span>
                 <span>{formatCurrency(total)}</span>
               </div>
             </div>
-            <Button className="w-full py-3 text-lg shadow-lg shadow-indigo-200">
+            <Button className={styles.footer.button}>
               Ir a Pagar
             </Button>
-            <p className="text-center text-xs text-slate-400 mt-3">Transacciones seguras procesadas externamente.</p>
+            <p className={styles.footer.disclaimer}>Transacciones seguras procesadas externamente.</p>
           </div>
         )}
       </div>
     </>
   );
+};
+
+const styles = {
+  overlay: "fixed inset-0 bg-black/50 z-40 transition-opacity duration-300",
+  sidebar: {
+    container: "fixed top-0 right-0 h-full w-[90%] sm:w-96 bg-bone shadow-2xl z-50 transform transition-transform duration-300 flex flex-col",
+    header: "p-5 border-b border-gold-400 flex justify-between items-center bg-gold-500",
+    closeBtn: "p-2 hover:bg-black/10 rounded-full text-black",
+    content: "flex-1 overflow-y-auto p-5 space-y-4",
+  },
+  emptyCart: "text-center text-stone-500 mt-20 font-medium",
+  item: {
+    container: "flex gap-4 border-b border-stone-200 pb-4 last:border-0",
+    image: "w-20 h-20 rounded-md object-cover bg-stone-100",
+    name: "font-bold text-black line-clamp-1",
+    details: "flex justify-between items-center mt-2",
+    removeBtn: "text-xs text-red-600 mt-2 hover:text-red-800 hover:underline font-medium"
+  },
+  footer: {
+    container: "p-6 border-t border-gold-200 bg-white",
+    row: "flex justify-between text-sm text-stone-800 font-medium",
+    totalRow: "flex justify-between text-lg font-bold text-black pt-2 border-t border-stone-200",
+    button: "w-full py-3 text-lg bg-gold-500 hover:bg-gold-400 text-black",
+    disclaimer: "text-center text-xs text-stone-500 mt-3 font-medium"
+  }
 };

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { UploadResponse, FetchStatus } from '../types';
 import { Button } from './Button';
 import { generateSmartDescription } from '../services/geminiService';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const AdminPanel: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -87,36 +87,36 @@ const AdminPanel: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-slate-800 mb-8">Panel de Administración</h1>
+    <div className={styles.layout}>
+      <h1 className={styles.pageTitle}>Panel de Administración</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className={styles.gridContainer}>
         {/* Formulario de Creación */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-          <h2 className="text-xl font-semibold mb-6 text-slate-700 flex items-center gap-2">
-            <span className="bg-indigo-100 text-indigo-700 p-1.5 rounded-lg text-sm">NUEVO</span>
+        <div className={styles.card.container}>
+          <h2 className={styles.card.title}>
+            <span className={styles.card.badge}>NUEVO</span>
             Agregar Producto
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Nombre del Producto</label>
+              <label className={styles.form.label}>Nombre del Producto</label>
               <input 
                 type="text" 
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+                className={styles.form.input}
                 placeholder="Ej: Camiseta Selección Peruana"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Categoría</label>
+                <label className={styles.form.label}>Categoría</label>
                 <select 
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className={styles.form.input}
                 >
                   <option value="General">General</option>
                   <option value="Ropa">Ropa</option>
@@ -125,12 +125,12 @@ const AdminPanel: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Precio (PEN)</label>
+                <label className={styles.form.label}>Precio (PEN)</label>
                 <input 
                   type="number" 
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className={styles.form.input}
                   placeholder="0.00"
                   step="0.10"
                 />
@@ -139,12 +139,12 @@ const AdminPanel: React.FC = () => {
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label className="block text-sm font-medium text-slate-700">Descripción</label>
+                <label className={styles.form.label}>Descripción</label>
                 <button 
                   type="button" 
                   onClick={handleGenerateDescription}
                   disabled={aiLoading || !productName}
-                  className="text-xs text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1 disabled:opacity-50"
+                  className={styles.form.aiButton}
                 >
                   {aiLoading ? 'Generando...' : '✨ Mejorar con Gemini AI'}
                 </button>
@@ -153,28 +153,28 @@ const AdminPanel: React.FC = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                className={styles.form.textarea}
                 placeholder="Descripción del producto..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Imagen del Producto</label>
+              <label className={styles.form.labelMargin}>Imagen del Producto</label>
               <div className="flex items-center gap-4">
                 <div className="flex-1">
-                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
+                   <label className={styles.form.uploadBox}>
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg className="w-8 h-8 mb-4 text-slate-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                        <svg className="w-8 h-8 mb-4 text-stone-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                         </svg>
-                        <p className="text-sm text-slate-500"><span className="font-semibold">Click para subir</span></p>
-                        <p className="text-xs text-slate-400">JPG, PNG (MAX. 2MB)</p>
+                        <p className="text-sm text-stone-500 font-medium"><span className="font-bold text-gold-700">Click para subir</span></p>
+                        <p className="text-xs text-stone-400 font-medium">JPG, PNG (MAX. 2MB)</p>
                     </div>
                     <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                 </label>
                 </div>
                 {previewUrl && (
-                  <div className="w-32 h-32 rounded-lg overflow-hidden border border-slate-200">
+                  <div className={styles.form.previewContainer}>
                     <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                   </div>
                 )}
@@ -183,7 +183,7 @@ const AdminPanel: React.FC = () => {
 
             <Button 
               type="submit" 
-              className="w-full mt-4" 
+              className={styles.form.submitBtn}
               isLoading={status === FetchStatus.LOADING}
             >
               Subir a Cloud Run & FTP
@@ -193,39 +193,79 @@ const AdminPanel: React.FC = () => {
 
         {/* Panel de Estadísticas */}
         <div className="flex flex-col gap-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-grow">
-            <h2 className="text-xl font-semibold mb-6 text-slate-700">Ventas Semanales</h2>
+          <div className={`${styles.card.container} flex-grow`}>
+            <h2 className={styles.chartTitle}>Ventas Semanales</h2>
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#64748b'}} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#64748b'}} />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#000000', fontWeight: 'bold'}} />
+                  <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#000000', fontWeight: 'bold'}} />
                   <Tooltip 
-                    cursor={{fill: '#f1f5f9'}}
-                    contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                    cursor={{fill: '#fffdb3'}} 
+                    contentStyle={{borderRadius: '8px', border: '1px solid #d6d3d1', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', backgroundColor: '#fff'}}
+                    itemStyle={{color: '#000'}}
+                    labelStyle={{color: '#b39700', fontWeight: 'bold'}}
                   />
-                  <Bar dataKey="ventas" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                  {/* Using both Gold subtypes for visualization */}
+                  <Bar dataKey="ventas" radius={[4, 4, 0, 0]}>
+                    {salesData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#cd9f33' : '#ffd700'} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
+              <div className="flex justify-center gap-4 mt-2 text-xs font-bold text-stone-600">
+                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-gold-500"></div>Metal Gold</div>
+                <div className="flex items-center gap-1"><div className="w-3 h-3 bg-sun-500"></div>Sun Gold</div>
+              </div>
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-indigo-900 to-indigo-700 p-6 rounded-xl shadow-lg text-white">
-            <h3 className="text-lg font-bold mb-2">Estado del Sistema</h3>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-              <span className="text-indigo-100 text-sm">Cloud Run API: Online</span>
+          <div className={styles.status.card}>
+            <h3 className={styles.status.title}>Estado del Sistema</h3>
+            <div className={styles.status.row}>
+              <div className={styles.status.indicator}></div>
+              <span className={styles.status.text}>Cloud Run API: Online</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-              <span className="text-indigo-100 text-sm">FTP Server: Conectado</span>
+            <div className={styles.status.row}>
+              <div className={styles.status.indicator}></div>
+              <span className={styles.status.text}>FTP Server: Conectado</span>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
+};
+
+const styles = {
+  layout: "max-w-6xl mx-auto p-6",
+  pageTitle: "text-3xl font-bold text-black mb-8",
+  gridContainer: "grid grid-cols-1 lg:grid-cols-2 gap-8",
+  card: {
+    container: "bg-white p-6 rounded-xl shadow-sm border border-stone-200",
+    title: "text-xl font-bold mb-6 text-black flex items-center gap-2",
+    badge: "bg-gold-100 text-black p-1.5 rounded-lg text-sm font-bold"
+  },
+  form: {
+    label: "block text-sm font-bold text-stone-900 mb-1",
+    labelMargin: "block text-sm font-bold text-stone-900 mb-2",
+    input: "w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-gold-500 outline-none transition-colors text-black font-medium",
+    textarea: "w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-gold-500 outline-none resize-none text-black font-medium",
+    aiButton: "text-xs text-gold-700 hover:text-gold-900 font-bold flex items-center gap-1 disabled:opacity-50",
+    uploadBox: "flex flex-col items-center justify-center w-full h-32 border-2 border-stone-300 border-dashed rounded-lg cursor-pointer bg-stone-50 hover:bg-stone-100 transition-colors",
+    previewContainer: "w-32 h-32 rounded-lg overflow-hidden border border-stone-200",
+    submitBtn: "w-full mt-4 bg-gold-500 hover:bg-gold-400 text-black"
+  },
+  chartTitle: "text-xl font-bold mb-6 text-black",
+  status: {
+    card: "bg-gradient-to-br from-gold-600 to-gold-700 p-6 rounded-xl shadow-lg text-black",
+    title: "text-lg font-bold mb-2",
+    row: "flex items-center gap-2 mb-1",
+    indicator: "w-2 h-2 rounded-full bg-green-500 animate-pulse",
+    text: "text-black text-sm font-medium"
+  }
 };
 
 export default AdminPanel;
