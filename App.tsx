@@ -5,6 +5,7 @@ import { MOCK_PRODUCTS } from './constants';
 import { ProductCard } from './components/ProductCard';
 import { CartSidebar } from './components/CartSidebar';
 import AdminPanel from './components/AdminPanel';
+import UserPanel from './components/UserPanel';
 
 // Helper for navbar to highlight active link
 const NavLink: React.FC<{ to: string; children: React.ReactNode }> = ({ to, children }) => {
@@ -34,10 +35,15 @@ const Navbar: React.FC<{ cartCount: number; onOpenCart: () => void }> = ({ cartC
             </Link>
             <div className="hidden md:block ml-10 flex items-baseline space-x-4">
               <NavLink to="/">Tienda</NavLink>
+              <NavLink to="/profile">Mi Cuenta</NavLink>
               <NavLink to="/admin">Admin</NavLink>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+             <Link to="/profile" className="p-2 rounded-full text-indigo-100 hover:bg-indigo-700 hover:text-white focus:outline-none hidden sm:block">
+               <span className="sr-only">Perfil</span>
+               <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+             </Link>
              <button 
               onClick={onOpenCart}
               className="p-2 rounded-full text-indigo-100 hover:bg-indigo-700 hover:text-white relative focus:outline-none"
@@ -106,6 +112,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Storefront addToCart={addToCart} />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/profile" element={<UserPanel cart={cart} />} />
           </Routes>
         </main>
 
