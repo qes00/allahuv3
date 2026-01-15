@@ -1,0 +1,5 @@
+{
+  "name": "Tienda Virtual Híbrida Perú",
+  "description": "Frontend e-commerce optimizado para arquitectura Cloud Run + FTP Hosting. Incluye cálculo de IGV y generación de contenido con Gemini AI.",
+  "requestFramePermissions": []
+}
