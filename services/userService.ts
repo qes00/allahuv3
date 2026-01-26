@@ -255,8 +255,11 @@ export const signUp = async (email: string, password: string): Promise<{ user: U
     }
 
     if (data.user) {
-        // Crear perfil vacío
-        await createUserProfile(data.user.id, {});
+        // Al usar confirmación de correo, no tenemos sesión aún, así que no podemos crear el perfil manualmente por RLS.
+        // Se debe usar un Trigger en la BD (recomendado) o esperar al primer login.
+        if (data.session) {
+            await createUserProfile(data.user.id, {});
+        }
 
         return {
             user: {
