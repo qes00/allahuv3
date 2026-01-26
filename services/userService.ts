@@ -313,3 +313,36 @@ export const signOut = async (): Promise<void> => {
 
     await supabase.auth.signOut();
 };
+
+/**
+ * Cambiar contraseña con verificación de la anterior
+ */
+export const changePassword = async (oldPassword: string, newPassword: string): Promise<{ success: boolean; error: string | null }> => {
+    if (!isSupabaseConfigured() || !supabase) {
+        return { success: false, error: 'Supabase no configurado' };
+    }
+
+    // 1. Verificar contraseña actual re-autenticando
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || !user.email) return { success: false, error: 'No hay usuario autenticado' };
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: oldPassword
+    });
+
+    if (signInError) {
+        return { success: false, error: 'La contraseña actual es incorrecta' };
+    }
+
+    // 2. Actualizar contraseña
+    const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword
+    });
+
+    if (updateError) {
+        return { success: false, error: handleSupabaseError(updateError) };
+    }
+
+    return { success: true, error: null };
+};

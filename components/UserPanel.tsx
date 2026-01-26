@@ -5,7 +5,7 @@ import { formatCurrency } from '../constants';
 import { useNavigate } from 'react-router-dom';
 import { MyOrders } from './MyOrders';
 import { useAuthStore } from '../stores/authStore';
-import { getUserProfile } from '../services/userService';
+import { getUserProfile, changePassword } from '../services/userService';
 
 interface UserPanelProps {
   cart: CartItem[];
@@ -58,6 +58,7 @@ const UserPanel: React.FC<UserPanelProps> = ({ cart }) => {
     new: '',
     confirm: ''
   });
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +68,7 @@ const UserPanel: React.FC<UserPanelProps> = ({ cart }) => {
 
 
 
-  const handlePasswordChange = (e: React.FormEvent) => {
+  const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordForm.new.length < 8) {
       alert("La contraseña debe tener al menos 8 caracteres.");
@@ -78,11 +79,21 @@ const UserPanel: React.FC<UserPanelProps> = ({ cart }) => {
       return;
     }
 
-    alert("Procesando encriptación bcrypt...");
-    setTimeout(() => {
-      alert("Tu contraseña ha sido actualizada correctamente.");
-      setPasswordForm({ current: '', new: '', confirm: '' });
-    }, 1000);
+    try {
+      setIsChangingPassword(true);
+      const { success, error } = await changePassword(passwordForm.current, passwordForm.new);
+      
+      if (success) {
+        alert("Tu contraseña ha sido actualizada correctamente.");
+        setPasswordForm({ current: '', new: '', confirm: '' });
+      } else {
+        alert(error || "Error al actualizar la contraseña");
+      }
+    } catch (err) {
+      alert("Ocurrió un error inesperado.");
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   const handleDeleteAccount = () => {
@@ -263,7 +274,7 @@ const UserPanel: React.FC<UserPanelProps> = ({ cart }) => {
                     className={styles.form.input}
                   />
                 </div>
-                <Button type="submit">Actualizar Contraseña</Button>
+                <Button type="submit" disabled={isChangingPassword}>{isChangingPassword ? 'Actualizando...' : 'Actualizar Contraseña'}</Button>
               </form>
 
               <div className="border-t border-stone-200 pt-8">
