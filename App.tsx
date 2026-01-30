@@ -53,8 +53,12 @@ const Navbar: React.FC<{ cartCount: number; onOpenCart: () => void; isAuthentica
       <div className={styles.navbar.wrapper}>
         <div className={styles.navbar.content}>
           <div className="flex items-center">
-            <Link to="/" className={styles.navbar.brand}>
-              ALLAHU AKBAR <span className={styles.navbar.brandHighlight}>SHOP</span>
+            <Link to="/" className="flex items-center">
+              <img 
+                src="/logo.png" 
+                alt="Allahu Akbar Jeans" 
+                className="h-12 md:h-14 w-auto object-contain"
+              />
             </Link>
             <div className={styles.navbar.desktopMenu}>
               <NavLink to="/">Inicio</NavLink>
@@ -389,6 +393,16 @@ const App: React.FC = () => {
             <footer className={styles.footer.container}>
               <div className={styles.footer.wrapper}>
                 <div className={styles.footer.grid}>
+                  <div>
+                    <img 
+                      src="/logo.png" 
+                      alt="Allahu Akbar Jeans" 
+                      className="h-16 w-auto object-contain mb-4 brightness-0 invert"
+                    />
+                    <p className={styles.footer.text}>
+                      Excelencia en moda peruana. Diseños únicos que combinan tradición y modernidad.
+                    </p>
+                  </div>
                   <div>
                     <h3 className={styles.footer.title}>Legales</h3>
                     <ul className={styles.footer.list}>
