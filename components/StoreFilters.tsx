@@ -18,7 +18,8 @@ interface StoreFiltersProps {
 }
 
 export const StoreFilters: React.FC<StoreFiltersProps> = ({ filters, onFilterChange, categories, maxPrice, availableSizes, availableColors }) => {
-    const [isExpanded, setIsExpanded] = useState(true);
+    // Cerrado por defecto en móvil, abierto en desktop
+    const [isExpanded, setIsExpanded] = useState(() => window.innerWidth >= 1024);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onFilterChange({ ...filters, searchQuery: e.target.value });
