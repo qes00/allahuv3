@@ -33,7 +33,7 @@ export const AboutUs: React.FC = () => {
                                 Bienvenidos a <span className="font-bold text-[#0f1c29]">Allahu Akbar Shop</span>. Somos una tienda virtual que fusiona la tradición con la modernidad.
                             </p>
                             <p className="mb-6 leading-relaxed">
-                                Nuestra misión es ofrecer excelencia en cada producto, desde tecnología hasta moda, curado para clientes exigentes que buscan calidad y distinción.
+                                Nuestra misión es ofrecer excelencia en cada producto curado para clientes exigentes que buscan calidad y distinción.
                             </p>
                             <p className="leading-relaxed">
                                 Creemos en el diseño como una forma de vida y en la satisfacción del cliente como nuestro mayor compromiso.
@@ -52,7 +52,7 @@ export const AboutUs: React.FC = () => {
                                 Bienvenidos a <span className="font-bold text-[#0f1c29]">Allahu Akbar Shop</span>. Somos una tienda virtual que fusiona la tradición con la modernidad.
                             </p>
                             <p className="mb-4">
-                                Nuestra misión es ofrecer excelencia en cada producto, desde tecnología hasta moda.
+                                Nuestra misión es ofrecer excelencia en cada producto.
                             </p>
                         </div>
                     </div>

@@ -128,6 +128,12 @@ export const ComplaintBook: React.FC = () => {
                                     <option value="Arequipa">Arequipa</option>
                                     <option value="Islay">Islay</option>
                                     <option value="Caylloma">Caylloma</option>
+                                    <option value="Camaná">Camaná</option>
+                                    <option value="Caravelí">Caravelí</option>
+                                    <option value="Castilla">Castilla</option>
+                                    <option value="Condesuyos">Condesuyos</option>
+                                    <option value="Cotahuasi">Cotahuasi</option>
+                                    <option value="La Union">La Union</option>
                                 </select>
                             </div>
                             <div>
@@ -137,6 +143,20 @@ export const ComplaintBook: React.FC = () => {
                                     <option value="Cercado">Arequipa (Cercado)</option>
                                     <option value="Yanahuara">Yanahuara</option>
                                     <option value="Cayma">Cayma</option>
+                                    <option value="Cerro Colorado">Cerro Colorado</option>
+                                    <option value="Alto Selva Alegre">Alto Selva Alegre</option>
+                                    <option value="Miraflores">Miraflores</option>
+                                    <option value="Mariano Melgar">Mariano Melgar</option>
+                                    <option value="Paucarpata">Paucarpata</option>
+                                    <option value="Jacobo Hunter">Jacobo Hunter</option>
+                                    <option value="Jose Luis Bustamante y Rivero">José Luis Bustamante y Rivero</option>
+                                    <option value="Socabaya">Socabaya</option>
+                                    <option value="Sachaca">Sachaca</option>
+                                    <option value="Tiabaya">Tiabaya</option>
+                                    <option value="Uchumayo">Uchumayo</option>
+                                    <option value="Yura">Yura</option>
+                                    <option value="Sabandia">Sabandía</option>
+                                    <option value="Characato">Characato</option>
                                 </select>
                             </div>
                         </div>

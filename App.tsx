@@ -410,7 +410,7 @@ const App: React.FC = () => {
                       <li><Link to="/complaints" className={styles.footer.link}>Libro de Reclamaciones</Link></li>
                       <li className="mt-4">
                         <Link to="/complaints">
-                          <img src="https://www.indecopi.gob.pe/documents/20182/227448/libro-de-reclamaciones-v2.png" alt="Libro de Reclamaciones" className="h-12 bg-white p-1 rounded" />
+                          <img src="https://server54.web-hosting.com:2083/cpsess8179609860/frontend/jupiter/filemanager/showfile.html?file=Logo-Libro-de-reclamaciones_480x480.webp&fileop=&dir=%2Fhome%2Fallalrvu&dirop=&charset=&file_charset=&baseurl=&basedir=" alt="Libro de Reclamaciones" className="h-12 bg-white p-1 rounded" />
                         </Link>
                       </li>
                     </ul>
@@ -449,7 +449,7 @@ const App: React.FC = () => {
 
             {/* WhatsApp Floating Button */}
             <a
-              href="https://wa.me/944472693?text=Hola!%20Deseo%20información%20sobre%20tus%20productos"
+              href="https://wa.me/+51944472693?text=Hola!%20Deseo%20información%20sobre%20tus%20productos"
               target="_blank"
               rel="noopener noreferrer"
               className="fixed bottom-6 right-6 z-50 bg-[#25d366] text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all animate-bounce-slow"
