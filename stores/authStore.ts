@@ -59,12 +59,21 @@ const fetchUserProfile = async (user: User): Promise<Partial<AuthUser>> => {
         let syncedData = {};
         const metadata = user.user_metadata;
         
-        if (data && (!data.first_name || !data.last_name) && metadata && (metadata.full_name || metadata.name)) {
-            const fullName = metadata.full_name || metadata.name || '';
-            const nameParts = fullName.split(' ');
-            const firstName = nameParts[0] || '';
-            const lastName = nameParts.slice(1).join(' ') || '';
-            
+        console.log('📋 User metadata from Google:', JSON.stringify(metadata, null, 2));
+        console.log('📋 Current profile data:', JSON.stringify(data, null, 2));
+        
+        // Google puede enviar el nombre en diferentes campos
+        const fullName = metadata?.full_name || metadata?.name || '';
+        const googleFirstName = metadata?.given_name || '';
+        const googleLastName = metadata?.family_name || '';
+        
+        // Usar given_name/family_name primero si existen, sino parsear full_name
+        const firstName = googleFirstName || (fullName ? fullName.split(' ')[0] : '') || '';
+        const lastName = googleLastName || (fullName ? fullName.split(' ').slice(1).join(' ') : '') || '';
+        
+        console.log('📋 Parsed names - firstName:', firstName, ', lastName:', lastName);
+        
+        if (data && (!data.first_name || !data.last_name) && (firstName || lastName)) {
             const updates: any = {};
             // Solo actualizar si faltan en la DB
             if (!data.first_name && firstName) updates.first_name = firstName;
@@ -77,10 +86,13 @@ const fetchUserProfile = async (user: User): Promise<Partial<AuthUser>> => {
                     .update(updates)
                     .eq('id', user.id);
                     
-                if (!updateError) {
+                if (updateError) {
+                    console.error('❌ Error updating profile with Google data:', updateError);
+                } else {
+                    console.log('✅ Profile updated successfully with Google data');
                     syncedData = {
-                        firstName: updates.first_name,
-                        lastName: updates.last_name
+                        firstName: updates.first_name || data.first_name,
+                        lastName: updates.last_name || data.last_name
                     };
                 }
             }
