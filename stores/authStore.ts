@@ -39,30 +39,78 @@ interface AuthState {
     isAdmin: () => boolean;
 }
 
-// Helper para obtener perfil de usuario
-const fetchUserProfile = async (userId: string): Promise<Partial<AuthUser>> => {
+// Helper para obtener perfil de usuario y sincronizar con metadatos de Google si es necesario
+const fetchUserProfile = async (user: User): Promise<Partial<AuthUser>> => {
     if (!supabase) return {};
     
     try {
         const { data, error } = await supabase
             .from('user_profiles')
             .select('first_name, last_name, phone, role')
-            .eq('id', userId)
-            .maybeSingle(); // Cambiado de .single() a .maybeSingle() para evitar error cuando no existe
+            .eq('id', user.id)
+            .maybeSingle();
         
         if (error) {
             console.error('❌ Error fetching user profile:', error);
             return {};
         }
+
+        // Sincronizar con Google Metadata si el perfil está incompleto
+        let syncedData = {};
+        const metadata = user.user_metadata;
+        
+        if (data && (!data.first_name || !data.last_name) && metadata && (metadata.full_name || metadata.name)) {
+            const fullName = metadata.full_name || metadata.name || '';
+            const nameParts = fullName.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+            
+            const updates: any = {};
+            // Solo actualizar si faltan en la DB
+            if (!data.first_name && firstName) updates.first_name = firstName;
+            if (!data.last_name && lastName) updates.last_name = lastName;
+            
+            if (Object.keys(updates).length > 0) {
+                console.log('🔄 Syncing user profile with Google data:', updates);
+                const { error: updateError } = await supabase
+                    .from('user_profiles')
+                    .update(updates)
+                    .eq('id', user.id);
+                    
+                if (!updateError) {
+                    syncedData = {
+                        firstName: updates.first_name,
+                        lastName: updates.last_name
+                    };
+                }
+            }
+        }
         
         if (!data) {
-            console.warn('⚠️ No profile found for user:', userId);
+            console.warn('⚠️ No profile found for user:', user.id);
+            // Intento de auto-crear si no existe (fallback si el trigger falla)
+            if (metadata && (metadata.full_name || metadata.name)) {
+                 // Misma logica de parsing
+                 const fullName = metadata.full_name || metadata.name || '';
+                 const nameParts = fullName.split(' ');
+                 const firstName = nameParts[0] || '';
+                 const lastName = nameParts.slice(1).join(' ') || '';
+                 
+                 await ensureUserProfile(user.id, user.email || '', firstName, lastName);
+                 // Retornar los datos recién creados
+                 return {
+                     firstName,
+                     lastName,
+                     phone: '',
+                     role: 'customer'
+                 };
+            }
             return {};
         }
         
         return {
-            firstName: data.first_name || '',
-            lastName: data.last_name || '',
+            firstName: (syncedData as any).firstName || data.first_name || '',
+            lastName: (syncedData as any).lastName || data.last_name || '',
             phone: data.phone || '',
             role: (data.role as UserRole) || 'customer',
         };
@@ -146,7 +194,7 @@ export const useAuthStore = create<AuthState>()(
                     if (error) throw error;
 
                     if (session?.user) {
-                        const profile = await fetchUserProfile(session.user.id);
+                        const profile = await fetchUserProfile(session.user);
                         
                         set({
                             session,
@@ -165,7 +213,7 @@ export const useAuthStore = create<AuthState>()(
                     // Escuchar cambios de autenticación
                     supabase.auth.onAuthStateChange(async (event, session) => {
                         if (event === 'SIGNED_IN' && session?.user) {
-                            const profile = await fetchUserProfile(session.user.id);
+                            const profile = await fetchUserProfile(session.user);
                             set({
                                 session,
                                 user: {
@@ -203,7 +251,7 @@ export const useAuthStore = create<AuthState>()(
                     }
 
                     if (data.user) {
-                        const profile = await fetchUserProfile(data.user.id);
+                        const profile = await fetchUserProfile(data.user);
                         
                         set({
                             session: data.session,
@@ -244,6 +292,8 @@ export const useAuthStore = create<AuthState>()(
                             },
                         },
                     });
+                    
+                    console.log('🔐 Initiating Google OAuth with redirect to:', `${window.location.origin}/`);
 
                     if (error) {
                         set({ isLoading: false, error: error.message });
