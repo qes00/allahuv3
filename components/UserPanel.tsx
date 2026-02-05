@@ -5,7 +5,7 @@ import { formatCurrency } from '../constants';
 import { useNavigate } from 'react-router-dom';
 import { MyOrders } from './MyOrders';
 import { useAuthStore } from '../stores/authStore';
-import { getUserProfile, changePassword, verifyCurrentPassword } from '../services/userService';
+import { getUserProfile, changePassword, verifyCurrentPassword, deleteAccount } from '../services/userService';
 
 interface UserPanelProps {
   cart: CartItem[];
@@ -129,18 +129,29 @@ const UserPanel: React.FC<UserPanelProps> = ({ cart }) => {
     setPasswordForm({ current: '', new: '', confirm: '' });
   };
 
-  const handleDeleteAccount = () => {
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+
+  const handleDeleteAccount = async () => {
     const isConfirmed = window.confirm(
       "¿ESTÁS SEGURO?\n\nEsta acción eliminará permanentemente tu cuenta, historial de pedidos y datos personales. Esta acción no se puede deshacer."
     );
 
     if (isConfirmed) {
-      alert("Eliminando datos...");
-      setTimeout(() => {
-        alert("Tu cuenta ha sido eliminada. Lamentamos verte partir.");
-        navigate('/');
-        window.location.reload();
-      }, 1500);
+      try {
+        setIsDeletingAccount(true);
+        const { success, error } = await deleteAccount();
+        
+        if (success) {
+          alert("Tu cuenta ha sido eliminada. Lamentamos verte partir.");
+          navigate('/');
+        } else {
+          alert(error || "Error al eliminar la cuenta. Intenta de nuevo.");
+        }
+      } catch (err) {
+        alert("Ocurrió un error inesperado.");
+      } finally {
+        setIsDeletingAccount(false);
+      }
     }
   };
 

@@ -398,3 +398,48 @@ export const changePassword = async (oldPassword: string, newPassword: string): 
 
     return { success: true, error: null };
 };
+
+/**
+ * Eliminar cuenta de usuario
+ * Nota: Esto elimina el perfil y datos asociados, pero NO elimina el usuario de auth.users
+ * (eso requiere permisos de admin/service_role). El usuario quedará "huérfano" pero no podrá acceder.
+ */
+export const deleteAccount = async (): Promise<{ success: boolean; error: string | null }> => {
+    if (!isSupabaseConfigured() || !supabase) {
+        return { success: false, error: 'Supabase no configurado' };
+    }
+
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { success: false, error: 'No hay usuario autenticado' };
+
+        // 1. Eliminar direcciones del usuario
+        const { error: addressError } = await supabase
+            .from('user_addresses')
+            .delete()
+            .eq('user_id', user.id);
+        
+        if (addressError) {
+            console.error('Error eliminando direcciones:', addressError);
+        }
+
+        // 2. Eliminar perfil del usuario
+        const { error: profileError } = await supabase
+            .from('user_profiles')
+            .delete()
+            .eq('id', user.id);
+        
+        if (profileError) {
+            console.error('Error eliminando perfil:', profileError);
+            return { success: false, error: 'Error al eliminar el perfil' };
+        }
+
+        // 3. Cerrar sesión
+        await supabase.auth.signOut();
+
+        return { success: true, error: null };
+    } catch (error) {
+        console.error('Error eliminando cuenta:', error);
+        return { success: false, error: 'Error inesperado al eliminar la cuenta' };
+    }
+};
