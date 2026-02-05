@@ -29,6 +29,7 @@ interface AuthState {
     // Actions
     initialize: () => Promise<void>;
     signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+    signInWithGoogle: () => Promise<{ success: boolean; error?: string }>;
     signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ success: boolean; error?: string }>;
     signOut: () => Promise<void>;
     clearError: () => void;
@@ -225,6 +226,39 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
+            signInWithGoogle: async () => {
+                if (!isSupabaseConfigured() || !supabase) {
+                    return { success: false, error: 'Supabase no configurado' };
+                }
+
+                set({ isLoading: true, error: null });
+
+                try {
+                    const { error } = await supabase.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                            redirectTo: `${window.location.origin}/`,
+                            queryParams: {
+                                access_type: 'offline',
+                                prompt: 'consent',
+                            },
+                        },
+                    });
+
+                    if (error) {
+                        set({ isLoading: false, error: error.message });
+                        return { success: false, error: error.message };
+                    }
+
+                    // OAuth redirige, así que el éxito se maneja en onAuthStateChange
+                    return { success: true };
+                } catch (error) {
+                    const message = error instanceof Error ? error.message : 'Error al iniciar sesión con Google';
+                    set({ isLoading: false, error: message });
+                    return { success: false, error: message };
+                }
+            },
+
             signUp: async (email: string, password: string, firstName?: string, lastName?: string) => {
                 if (!isSupabaseConfigured() || !supabase) {
                     return { success: false, error: 'Supabase no configurado' };
@@ -314,6 +348,7 @@ export const useAuth = () => useAuthStore((state) => ({
 
 export const useAuthActions = () => useAuthStore((state) => ({
     signIn: state.signIn,
+    signInWithGoogle: state.signInWithGoogle,
     signUp: state.signUp,
     signOut: state.signOut,
     clearError: state.clearError,
