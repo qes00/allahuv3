@@ -34,3 +34,6 @@ config/api-keys.php
 
 # Local Netlify folder
 .netlify
+
+# Admin scripts (Sensitive - do not commit)
+admin_user_manager.js
